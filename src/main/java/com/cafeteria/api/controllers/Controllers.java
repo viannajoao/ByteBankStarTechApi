@@ -25,8 +25,8 @@ public class Controllers {
 
 
     @GetMapping("/")
-    public String PrincipalScreen(){
-        return "Hello World";
+    public Iterable<Clients> PrincipalScreen(){
+        return repository.findAll();
     }
 
 
