@@ -29,5 +29,11 @@ public class Controllers {
         return repository.findAll();
     }
 
+    @PutMapping("/")
+    public Clients edite(@RequestBody Clients c){ return repository.save(c);}
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable long id){ repository.deleteById(id);}
+
 
 }
