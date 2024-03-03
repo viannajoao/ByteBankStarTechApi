@@ -1,8 +1,10 @@
 package com.cafeteria.api.models;
 
-import com.cafeteria.api.controllers.Cpf;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import org.hibernate.validator.constraints.br.CPF;
 
 import java.util.UUID;
 
@@ -12,12 +14,16 @@ import java.util.UUID;
 public class Clients {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
-    private int cpf;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+    @CPF
+    private String cpf;
+    @NotBlank
     private String name;
+    @Email
+    @NotBlank
     private String email;
-    private String password;
+    @NotBlank
+    private String tel;
 
 }
