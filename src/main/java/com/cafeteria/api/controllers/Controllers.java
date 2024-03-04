@@ -1,7 +1,9 @@
 package com.cafeteria.api.controllers;
 
 import com.cafeteria.api.models.Clients;
+import com.cafeteria.api.models.Credito;
 import com.cafeteria.api.repository.Repository;
+import com.cafeteria.api.repository.RepositoryCard;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +37,8 @@ public class Controllers {
         return repository.findAll();
     }
 
+
+
     @PutMapping("/")
     public Clients edite(@RequestBody Clients c) {
         return repository.save(c);
@@ -43,6 +47,30 @@ public class Controllers {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable long id) {
         repository.deleteById(id);
+    }
+
+
+
+    //FUNCOES CRUD PARA CARTOES
+
+    @Autowired
+    private Credito card;
+
+
+    @Autowired
+    private RepositoryCard repositoryCard;
+
+    @PostMapping("/cadastrarCartoes")
+    public Credito cadastrarCartao(@RequestBody Credito credito) {
+        String validade = card.getValidade();
+       return repositoryCard.save(credito);
+
+    }
+
+    @GetMapping("/cartoes")
+    public Iterable<Credito> Cartoes() {
+
+        return repositoryCard.findAll();
     }
 
 
