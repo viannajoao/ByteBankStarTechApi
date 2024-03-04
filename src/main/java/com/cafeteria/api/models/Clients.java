@@ -1,24 +1,22 @@
 package com.cafeteria.api.models;
 
-import com.cafeteria.api.controllers.Cpf;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.UUID;
 
 @Entity
-@Table(name = "clients")
+@Table(name = "clientes")
 @Data
 public class Clients {
 
     @Id
-    private long id;
+    @GeneratedValue( strategy = GenerationType.UUID)
+    private UUID id;
 
-    private int cpf;
+    private long cpf;
     private String name;
     private String email;
-    private String password;
+    private String tel;
 
 }
