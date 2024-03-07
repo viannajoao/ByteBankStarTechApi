@@ -64,7 +64,7 @@ public class Controllers {
 
 
 
-    //FUNCOES CRUD PARA CARTOES
+    // ============================= FUNCOES CRUD PARA CARTOES ==============================================
 
     @Autowired
     private Credito card;
@@ -84,6 +84,21 @@ public class Controllers {
     public Iterable<Credito> Cartoes() {
 
         return repositoryCard.findAll();
+    }
+
+    @GetMapping("/cartoesz/{id}")
+    public ResponseEntity<Credito> getCreditoById(@PathVariable("id") UUID id) {
+        Credito credito = repositoryCard.findById(id).orElse(null);
+        if (credito != null) {
+            return new ResponseEntity<>(credito, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/cartoes/{id}")
+    public void deleteCard(@PathVariable UUID id){
+        repositoryCard.deleteById(id);
     }
 
 
