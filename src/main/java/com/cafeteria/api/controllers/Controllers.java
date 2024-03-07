@@ -86,7 +86,7 @@ public class Controllers {
         return repositoryCard.findAll();
     }
 
-    @GetMapping("/cartoesz/{id}")
+    @GetMapping("/cartoes/{id}")
     public ResponseEntity<Credito> getCreditoById(@PathVariable("id") UUID id) {
         Credito credito = repositoryCard.findById(id).orElse(null);
         if (credito != null) {
@@ -101,5 +101,9 @@ public class Controllers {
         repositoryCard.deleteById(id);
     }
 
+    @PutMapping("/cartoes/{id}")
+    public Credito editeCredit(@PathVariable("id") UUID id, @RequestBody Credito c) {
+        return repositoryCard.save(c);
+    }
 
 }
