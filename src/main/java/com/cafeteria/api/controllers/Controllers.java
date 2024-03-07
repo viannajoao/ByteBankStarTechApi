@@ -6,8 +6,11 @@ import com.cafeteria.api.repository.Repository;
 import com.cafeteria.api.repository.RepositoryCard;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -37,15 +40,25 @@ public class Controllers {
         return repository.findAll();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Clients> getClientById(@PathVariable("id") UUID id) {
+        Clients client = repository.findById(id).orElse(null);
+        if (client != null) {
+            return new ResponseEntity<>(client, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
 
-    @PutMapping("/")
-    public Clients edite(@RequestBody Clients c) {
+
+    @PutMapping("/{id}")
+    public Clients edite(@PathVariable("id") UUID id, @RequestBody Clients c) {
         return repository.save(c);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable long id) {
+    public void delete(@PathVariable UUID id) {
         repository.deleteById(id);
     }
 
