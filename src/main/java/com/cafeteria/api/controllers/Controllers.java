@@ -1,15 +1,18 @@
 package com.cafeteria.api.controllers;
 
 import com.cafeteria.api.models.Clients;
+import com.cafeteria.api.models.Compras;
 import com.cafeteria.api.models.Credito;
 import com.cafeteria.api.repository.Repository;
 import com.cafeteria.api.repository.RepositoryCard;
+import com.cafeteria.api.repository.RepositoryCompras;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -105,5 +108,28 @@ public class Controllers {
     public Credito editeCredit(@PathVariable("id") UUID id, @RequestBody Credito c) {
         return repositoryCard.save(c);
     }
+
+
+
+    // ================================== CRUD PARA COMPRAS ==================================//
+
+
+    @Autowired
+    RepositoryCompras repositoryCompras;
+
+    @GetMapping("/cartoes/faturas/{numeroCartao}")
+    public ResponseEntity<List<Compras>> getComprasPorNumeroCartao(@PathVariable("numeroCartao") String numeroCartao) {
+        List<Compras> compras = repositoryCompras.findByNumeroCartao(numeroCartao);
+        return new ResponseEntity<>(compras, HttpStatus.OK);
+
+    }
+
+
+    @PostMapping("/compras/cadastrarCompras")
+    public Compras cadastrarCompra(@RequestBody Compras c) {
+        return repositoryCompras.save(c);
+
+    }
+
 
 }
