@@ -34,6 +34,10 @@ public class Credito {
 
     private BigDecimal limity;
 
+    @ManyToOne
+    @JoinColumn(name = "cliente_id", referencedColumnName = "id")
+    private Clients clients_id;
+
     public Credito() {
         LocalDate dataAtual = LocalDate.now();
         LocalDate validadeCartao = dataAtual.plusYears(4).plusMonths(6);

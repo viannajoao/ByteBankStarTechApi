@@ -1,8 +1,6 @@
 package com.cafeteria.api.controllers;
 
-import com.cafeteria.api.models.Clients;
-import com.cafeteria.api.models.Compras;
-import com.cafeteria.api.models.Credito;
+import com.cafeteria.api.models.*;
 import com.cafeteria.api.repository.Repository;
 import com.cafeteria.api.repository.RepositoryCard;
 import com.cafeteria.api.repository.RepositoryCompras;
@@ -12,8 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -56,7 +54,7 @@ public class Controllers {
 
 
     @PutMapping("/{id}")
-    public Clients edite(@PathVariable("id") UUID id, @RequestBody Clients c) {
+    public Clients edite(@PathVariable("id") UUID id, @RequestBody @Valid Clients c) {
         return repository.save(c);
     }
 
@@ -117,9 +115,9 @@ public class Controllers {
     @Autowired
     RepositoryCompras repositoryCompras;
 
-    @GetMapping("/cartoes/faturas/{numeroCartao}")
-    public ResponseEntity<List<Compras>> getComprasPorNumeroCartao(@PathVariable("numeroCartao") String numeroCartao) {
-        List<Compras> compras = repositoryCompras.findByNumeroCartao(numeroCartao);
+    @GetMapping("/cartoes/faturas/{cartao}")
+    public ResponseEntity<List<Compras>> getComprasPorNumeroCartao(@PathVariable("cartao") String cartao) {
+        List<Compras> compras = repositoryCompras.findByCartao(cartao);
         return new ResponseEntity<>(compras, HttpStatus.OK);
 
     }
@@ -132,4 +130,81 @@ public class Controllers {
     }
 
 
+    // ============================== RELATORIOS =====================================//
+
+    @Autowired
+    private ClientService clienteService;
+
+
+    @GetMapping("/relatorios")
+    public ResponseEntity<List<Map<String, Object>>> getClientesCompras() {
+        List<Object[]> results = clienteService.getClientesMaisCompraram();
+        List<Map<String, Object>> clientesCompras = new ArrayList<>();
+
+        for (Object[] result : results) {
+            Map<String, Object> clienteCompras = new HashMap<>();
+            clienteCompras.put("name", result[1]);
+            clienteCompras.put("total_compras", result[3]);
+            clienteCompras.put("horario", result[2]);
+            clienteCompras.put("id", result[0]); // Se houver um quarto elemento como id
+            // Se houver mais campos, adicione-os conforme necessário
+            clientesCompras.add(clienteCompras);
+        }
+
+        return new ResponseEntity<>(clientesCompras, HttpStatus.OK);
+    }
+
+    @GetMapping("/compras/relatorioGastos")
+    public List<ComprasDTO> findSumValorByCategoria() {
+        List<Object[]> resultados = clientService.findSumValorByCategoria();
+        List<ComprasDTO> dtos = new ArrayList<>();
+        for (Object[] resultado : resultados) {
+            String categoria = (String) resultado[0];
+            Double valor = (Double) resultado[1];
+            LocalDateTime date = (LocalDateTime) resultado[2];
+            dtos.add(new ComprasDTO(categoria, valor, date));
+        }
+        return dtos;
+    }
+
+
+
+
+    @GetMapping("/relatorios/maisgastaram")
+    public ResponseEntity<List<Map<String, Object>>> getClientesMaisGastaram() {
+        List<Object[]> results = clienteService.getClientesMaisGastaram();
+        List<Map<String, Object>> clientesCompras = new ArrayList<>();
+
+        for (Object[] result : results) {
+            Map<String, Object> clienteCompras = new HashMap<>();
+            clienteCompras.put("name", result[1]);
+            clienteCompras.put("maior_valor", result[3]);
+            clienteCompras.put("horario", result[2]);
+            clienteCompras.put("id", result[0]); // Se houver um quarto elemento como id
+            // Se houver mais campos, adicione-os conforme necessário
+            clientesCompras.add(clienteCompras);
+        }
+
+        return new ResponseEntity<>(clientesCompras, HttpStatus.OK);
+    }
+
+    @GetMapping("/relatorios/clientsNotBuy")
+    public List<ClientBuyDTO> getClientesNaoCompraram() {
+        List<Object[]> resultados = clientService.getClientesNaoCompraramNada();
+        List<ClientBuyDTO> dtos = new ArrayList<>();
+        for (Object[] resultado : resultados) {
+            UUID clienteId = (UUID) resultado[0];
+            String nomeCliente = (String) resultado[1];
+            LocalDateTime date = null;
+            if (resultado[2] != null) {
+                date = (LocalDateTime) resultado[2];
+            }
+            dtos.add(new ClientBuyDTO(clienteId, nomeCliente, date));
+        }
+        return dtos;
+    }
+
+
 }
+
+
