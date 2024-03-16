@@ -21,6 +21,11 @@ public class ClientService {
                 return client != null;
     }
 
+    public boolean cpfExist(String cpf){
+        Clients client = validUser.findByCpf(cpf);
+        return client != null;
+    }
+
     public List<Object[]> getClientesMaisCompraram() {
         return validUser.findClientesMaisCompraram();
     }

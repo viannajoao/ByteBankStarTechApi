@@ -12,6 +12,7 @@ import java.util.UUID;
 
 public interface ValidUser extends JpaRepository<Clients, UUID> {
     Clients findByEmail(String email);
+    Clients findByCpf(String cpf);
 
     @Query("SELECT c.categoria, SUM(c.valor), c.date FROM Compras c GROUP BY c.categoria, c.date ")
     List<Object[]> findSumValorByCategoria();
