@@ -42,6 +42,16 @@ public class Controllers {
 
         return repository.findAll();
     }
+    @GetMapping("/cartoes/cadastrarCartao")
+    public ResponseEntity<List<Clients>> findClientsNoCard() {
+        List<Clients> clientsWithoutCard = clienteService.clientsNoCard();
+
+        if (!clientsWithoutCard.isEmpty()) {
+            return ResponseEntity.ok(clientsWithoutCard);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Clients> getClientById(@PathVariable("id") UUID id) {

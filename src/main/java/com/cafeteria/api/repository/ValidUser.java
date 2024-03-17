@@ -17,6 +17,8 @@ public interface ValidUser extends JpaRepository<Clients, UUID> {
     @Query("SELECT c.categoria, SUM(c.valor), c.date FROM Compras c GROUP BY c.categoria, c.date ")
     List<Object[]> findSumValorByCategoria();
 
+    @Query("SELECT c FROM Clients c WHERE NOT EXISTS (SELECT 1 FROM Credito cc WHERE cc.clients_id = c)")
+    List<Clients> findClientesSemCartao();
 
 
     @Query("SELECT c.id AS cliente_id, c.name AS nome_cliente, " +

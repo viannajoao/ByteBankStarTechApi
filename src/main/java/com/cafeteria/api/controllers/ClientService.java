@@ -21,6 +21,8 @@ public class ClientService {
                 return client != null;
     }
 
+    public List<Clients> clientsNoCard(){ return validUser.findClientesSemCartao();}
+
     public boolean cpfExist(String cpf){
         Clients client = validUser.findByCpf(cpf);
         return client != null;
