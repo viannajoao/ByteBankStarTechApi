@@ -34,7 +34,7 @@ public class Credito {
 
     private BigDecimal limity;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "cliente_id", referencedColumnName = "id")
     private Clients clients_id;
 
