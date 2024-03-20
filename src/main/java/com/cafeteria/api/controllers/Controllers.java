@@ -27,6 +27,8 @@ public class Controllers {
     public ResponseEntity<String> cadastrar(@RequestBody @Valid Clients c) {
         if (clientService.userExist(c.getEmail())) {
             return ResponseEntity.badRequest().body("Usuario ja existente");
+        } else if(clientService.cpfExist(c.getCpf())){
+            return ResponseEntity.badRequest().body("Usuario ja existente");
         }
 
          repository.save(c);
@@ -39,6 +41,16 @@ public class Controllers {
     public Iterable<Clients> PrincipalScreen() {
 
         return repository.findAll();
+    }
+    @GetMapping("/cartoes/cadastrarCartao")
+    public ResponseEntity<List<Clients>> findClientsNoCard() {
+        List<Clients> clientsWithoutCard = clienteService.clientsNoCard();
+
+        if (!clientsWithoutCard.isEmpty()) {
+            return ResponseEntity.ok(clientsWithoutCard);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/{id}")
@@ -54,8 +66,18 @@ public class Controllers {
 
 
     @PutMapping("/{id}")
-    public Clients edite(@PathVariable("id") UUID id, @RequestBody @Valid Clients c) {
-        return repository.save(c);
+    public ResponseEntity<String> edite(@PathVariable("id") UUID id, @RequestBody @Valid Clients c) {
+
+        if (!clientService.cpfExist(c.getCpf())) {
+
+            return ResponseEntity.badRequest().body("Usuario ja existente");
+
+        }
+
+        repository.save(c);
+
+        return ResponseEntity.ok("Usuario cadastrado");
+
     }
 
     @DeleteMapping("/{id}")
