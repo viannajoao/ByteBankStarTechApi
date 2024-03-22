@@ -146,9 +146,14 @@ public class Controllers {
 
 
     @PostMapping("/compras/cadastrarCompras")
-    public Compras cadastrarCompra(@RequestBody Compras c) {
-        return repositoryCompras.save(c);
+    public ResponseEntity<String> cadastrarCompra(@RequestBody Compras c) {
+        if(c.getValor() > c.getCredits_id().getLimity()){
+            return ResponseEntity.badRequest().body("Valor acima do limite");
+        }else {
+            repositoryCompras.save(c);
+        }
 
+        return ResponseEntity.ok("Compra realizada com sucesso");
     }
 
 

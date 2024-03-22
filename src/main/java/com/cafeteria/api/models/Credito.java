@@ -33,7 +33,7 @@ public class Credito {
 //    @Pattern(regexp = "\\d{3}", message = "A variável deve conter exatamente 16 caracteres numéricos.")
     private String cv;
 
-    private BigDecimal limity;
+    private double limity;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id", referencedColumnName = "id")
