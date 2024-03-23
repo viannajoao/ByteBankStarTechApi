@@ -150,7 +150,7 @@ public class Controllers {
         if(c.getValor() > c.getCredits_id().getLimity()){
             return ResponseEntity.badRequest().body("Valor acima do limite");
         }else {
-            double novoLimite = c.getCredits_id().getLimity() - c.getValor();
+            double novoLimite = (c.getCredits_id().getLimity() - c.getValor());
             c.getCredits_id().setLimity(novoLimite);
             repositoryCompras.save(c);
         }
