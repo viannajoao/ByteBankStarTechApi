@@ -10,7 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.LimitExceededException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 @RestController
@@ -147,15 +151,30 @@ public class Controllers {
 
     @PostMapping("/compras/cadastrarCompras")
     public ResponseEntity<String> cadastrarCompra(@RequestBody Compras c) {
-        if(c.getValor() > c.getCredits_id().getLimity()){
-            return ResponseEntity.badRequest().body("Valor acima do limite");
+        if(c.getValor() < c.getCredits_id().getLimity()){
+
+            double limiteAtual = c.getCredits_id().getLimity();
+            // Obter todas as compras do cartão no mês atual
+            LocalDateTime primeiroDiaMes = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay();
+            LocalDateTime ultimoDiaMes = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth()).atTime(LocalTime.MAX);
+            List<Compras> comprasMesAtual = repositoryCompras.findByCartaoIdAndDataBetween(c.getCredits_id().getId(), primeiroDiaMes, ultimoDiaMes);
+
+            double totalComprasMesAtual = comprasMesAtual.stream().mapToDouble(Compras::getValor).sum();
+
+            totalComprasMesAtual += c.getValor();
+
+            if(totalComprasMesAtual > limiteAtual){
+                return ResponseEntity.badRequest().body("Limite excedido para esta compra " + totalComprasMesAtual);
+            } else {
+                repositoryCompras.save(c);
+                return ResponseEntity.ok("Compra realizada com sucesso " + totalComprasMesAtual);
+            }
         }else {
-            double novoLimite = (c.getCredits_id().getLimity() - c.getValor());
-            c.getCredits_id().setLimity(novoLimite);
-            repositoryCompras.save(c);
+            return ResponseEntity.badRequest().body("Valor acima do limite");
+
         }
 
-        return ResponseEntity.ok("Compra realizada com sucesso");
+
     }
 
 
