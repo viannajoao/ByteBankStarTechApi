@@ -128,8 +128,26 @@ public class Controllers {
     }
 
     @PutMapping("/cartoes/{id}")
-    public Credito editeCredit(@PathVariable("id") UUID id, @RequestBody Credito c) {
-        return repositoryCard.save(c);
+    public ResponseEntity editeCredit(@PathVariable("id") UUID id, @RequestBody Credito c) {
+
+        Optional<Credito> cartaoOpcional = repositoryCard.findById(id);
+
+        if(!cartaoOpcional.isPresent()){
+            return ResponseEntity.notFound().build();
+        }
+
+        Credito cartao = cartaoOpcional.get();
+
+        if(c.getLimity() <= cartao.getLimity()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+        cartao.setLimity(c.getLimity());
+
+        Credito novoLimite = repositoryCard.save(c);
+
+        return ResponseEntity.ok().body("Limite alterado com sucesso");
+
+
     }
 
 
