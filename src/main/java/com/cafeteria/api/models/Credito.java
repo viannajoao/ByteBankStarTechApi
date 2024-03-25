@@ -4,6 +4,7 @@ package com.cafeteria.api.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
+import org.hibernate.annotations.Formula;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -24,7 +25,7 @@ public class Credito {
 
 //    @Pattern(regexp = "\\d{16}", message = "A variável deve conter exatamente 16 caracteres numéricos.")
     private String numCartao;
-
+    @Formula("(SELECT c.name FROM Clients c WHERE c.id = cliente_id)")
     private String client;
 
     private String validade;
@@ -32,7 +33,11 @@ public class Credito {
 //    @Pattern(regexp = "\\d{3}", message = "A variável deve conter exatamente 16 caracteres numéricos.")
     private String cv;
 
-    private BigDecimal limity;
+    private double limity;
+
+    @ManyToOne
+    @JoinColumn(name = "cliente_id", referencedColumnName = "id")
+    private Clients clients_id;
 
     public Credito() {
         LocalDate dataAtual = LocalDate.now();
@@ -43,6 +48,7 @@ public class Credito {
 
         this.numCartao = GerarNumCard();
         this.cv = GerarCv();
+
     }
 
     public String GerarNumCard() {
@@ -64,6 +70,11 @@ public class Credito {
         }
         return numero.toString();
     }
+
+//    public String getClient(){
+//        String nameClient = this.clients_id.getName();
+//        return nameClient;
+//    }
 
 
 
