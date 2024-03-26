@@ -123,8 +123,18 @@ public class Controllers {
     }
 
     @DeleteMapping("/cartoes/{id}")
-    public void deleteCard(@PathVariable UUID id){
+    public ResponseEntity<String> deleteCard(@PathVariable UUID id){
+
+        String cartao = String.valueOf(id);
+
+        List<Compras> comprasAssociadas = repositoryCompras.findByCartao(cartao);
+        if(!comprasAssociadas.isEmpty()){
+            return ResponseEntity.badRequest().body("Conta em aberto com o banco");
+        }
+
         repositoryCard.deleteById(id);
+
+        return ResponseEntity.ok().body("Cartão deletado com sucesso");
     }
 
     @PutMapping("/cartoes/{id}")
